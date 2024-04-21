@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Translation App</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <style>
+    #output {
+      white-space: pre;
+      font-family: monospace;
+    }
+
+    .translation-container {
+      word-wrap: break-word; /* Force translations to wrap */
+      overflow-y: auto; /* Add vertical scroll bar */
+      max-height: 450px; /* Limit height to prevent excessive space */
+    }
+
+    .card {
+      height: 500px; /* Set height of the card */
+    }
+
+
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Translation App</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <select id="languageSelector" class="selectpicker" multiple data-selected-text-format="count > 2">
+            <option value="fr">French</option>
+            <option value="es">Spanish</option>
+            <option value="bg">Bulgarian</option>
+            <option value="ar">Arabic</option>
+            <option value="hi">Hindi</option>
+            <option value="zh-Hans">Chinese (Simplified)</option>
+            <!-- Add more languages here -->
+          </select>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="increaseTextSize()"><i class="fas fa-plus"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="decreaseTextSize()"><i class="fas fa-minus"></i></a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" id="output">
+    <br>
+  
+  </div>
+
+  <!-- Bootstrap JS, Popper.js, and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+  <script>
+    const languageDivs = {};
+
+    function getParameterByName(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    function updateLanguagesInQuery() {
+      const selectedLanguages = $('#languageSelector').val();
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.delete('language');
+      if (selectedLanguages) {
+        selectedLanguages.forEach(language => {
+          currentUrl.searchParams.append('language', language);
+        });
+      }
+      window.history.pushState({}, '', currentUrl);
+    }
+
+    $('#languageSelector').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+      updateLanguagesInQuery();
+      const selectedLanguages = $('#languageSelector').val();
+      
+      // Clear output container
+      const output = document.querySelector('#output');
+      output.innerHTML = '';
+
+      // Process selected languages
+      for (let i = 0; i < selectedLanguages.length; i += 2) {
+        const row = document.createElement('div');
+        row.className = 'row';
+        output.appendChild(row);
+
+        const language1 = selectedLanguages[i];
+        const language2 = selectedLanguages[i + 1];
+
+        createLanguageCard(language1, row);
+        if (language2) {
+          createLanguageCard(language2, row);
+        }
+      }
+    });
+
+    function createLanguageCard(language, row) {
+      const card = document.createElement('div');
+      card.className = 'col-sm-6';
+      card.innerHTML = `
+        <div class="card">
+          <div class="card-body text-wrap">
+            <h5 class="card-title">${language.toUpperCase()} Translation</h5>
+            <div class="card-text translation-container text-wrap " id="${language}-container"></div> <!-- Changed from <p> to <div> -->
+          </div>
+        </div>
+      `;
+      row.appendChild(card);
+    }
+
+    (async function () {
+      let res = await fetch('/negotiate')
+      let data = await res.json();
+      let ws = new WebSocket(data.url, 'json.webpubsub.azure.v1');
+      ws.onopen = () => {
+        console.log('connected');
+        ws.send(JSON.stringify({
+          type: 'joinGroup',
+          group: 'stream',
+          data: 'data'
+        }));
+      };
+
+      let output = document.querySelector('#output');
+      ws.onmessage = event => {
+        const parsedData = JSON.parse(event.data);
+        console.log(parsedData);
+
+        const data = JSON.parse(parsedData.data);
+
+        // Extract language and translation from parsed data
+        const language = data.language;
+        const translation = data.translation;
+        console.log(translation);
+
+        // Get language from query string
+        const queryStringLanguage = getParameterByName('language');
+
+        // Check if div for this language already exists
+        if (!languageDivs[language]) {
+          // Create a new div for this language
+          const container = document.getElementById(`${language}-container`);
+          if (container) {
+            container.innerHTML = translation;
+          } else {
+            console.log(`Container for ${language} not found.`);
+          }
+          languageDivs[language] = true;
+        } else {
+          // Append translation to the appropriate div
+          const selectedLanguages = $('#languageSelector').val();
+          if (!queryStringLanguage || selectedLanguages.includes(language)) {
+            const container = document.getElementById(`${language}-container`);
+            if (container) {
+              container.innerHTML += `<br>${translation}`;
+              container.scrollTop = container.scrollHeight; // Scroll to the bottom
+            }
+          }
+        }
+      };
+
+      // Set selected languages from query string
+      const queryStringLanguage = getParameterByName('language');
+      if (queryStringLanguage) {
+        $('#languageSelector').selectpicker('val', [queryStringLanguage]);
+      }
+
+      // Trigger language selection change after setting selected languages
+      $('#languageSelector').trigger('changed.bs.select');
+    })();
+
+    function increaseTextSize() {
+  const translationContainers = document.querySelectorAll('.translation-container');
+  translationContainers.forEach(container => {
+    const currentFontSize = parseFloat(window.getComputedStyle(container).fontSize);
+    container.style.fontSize = (currentFontSize + 1) + 'px';
+  });
+}
+
+function decreaseTextSize() {
+  const translationContainers = document.querySelectorAll('.translation-container');
+  translationContainers.forEach(container => {
+    const currentFontSize = parseFloat(window.getComputedStyle(container).fontSize);
+    container.style.fontSize = (currentFontSize - 1) + 'px';
+  });
+}
+  </script>
+</body>
+
+</html>
