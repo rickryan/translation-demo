@@ -5,7 +5,7 @@ from azure.messaging.webpubsubservice import WebPubSubServiceClient
 app = Flask(__name__)
 
 # Initialize Web PubSub service client with connection string and hub name from environment variables
-connection_string = os.getenv("WEBPUBSUB_CONNECTION_STRING")
+connection_string = os.getenv("AZURE_WEBPUBSUB_CONNECTIONSTRING")
 hub_name = os.getenv("WEBPUBSUB_HUB_NAME", "sample_stream")  # Default hub name is 'sample_stream'
 
 if not connection_string:
