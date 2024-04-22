@@ -122,7 +122,7 @@ def recognize_from_file():
 
     # Waits for completion.
     while not transcribing_stop:
-        time.sleep(.5)
+        time.sleep(5)
 
     conversation_transcriber.stop_transcribing_async()
 
