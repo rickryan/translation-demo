@@ -1,12 +1,15 @@
 import os
 from flask import Flask, request, jsonify, send_file
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
 # Initialize Web PubSub service client with connection string and hub name from environment variables
-connection_string = os.getenv("WEBPUBSUB_CONNECTION_STRING")
-hub_name = os.getenv("WEBPUBSUB_HUB_NAME", "sample_stream")  # Default hub name is 'sample_stream'
+connection_string = os.getenv("PUBSUB_ENDPOINT")
+hub_name = os.getenv("PUBSUB_HUBNAME", "sample_stream")  # Default hub name is 'sample_stream'
 
 if not connection_string:
     raise ValueError("WEBPUBSUB_CONNECTION_STRING environment variable not set.")

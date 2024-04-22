@@ -5,6 +5,10 @@ import requests, uuid, json
 import sys
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 import threading
+from dotenv import load_dotenv
+
+load_dotenv()
+AZURE_REGION = os.getenv('AZURE_REGION')
 
 
 def conversation_transcriber_recognition_canceled_cb(evt: speechsdk.SessionEventArgs):
@@ -21,8 +25,8 @@ def conversation_transcriber_transcribed_cb(evt: speechsdk.SpeechRecognitionEven
         print('\tNOMATCH: Speech could not be TRANSCRIBED: {}'.format(evt.result.no_match_details))
 
 def handle_publish(translations):
-    connection_string = "Endpoint=https://pb-transalate-demo-ps.webpubsub.azure.com;AccessKey=8A7R1e1gwVAba6VsZP6qEUXVTnFZypFFw8ys6HdwPAI=;Version=1.0;"
-    hub_name = "sample_stream"
+    connection_string = os.getenv('PUBSUB_ENDPOINT')
+    hub_name = os.getenv('PUBSUB_HUBNAME')
     message = translations
 
     service = WebPubSubServiceClient.from_connection_string(connection_string, hub=hub_name)
@@ -43,10 +47,10 @@ def process_translation(translation):
     handle_publish(json_text)
 
 def handle_translation(text):
-    key = "fb2363d155f445f6a8d0b2becf463cbe"
+    key = os.getenv('TRANSLATOR_KEY')
     endpoint = "https://api.cognitive.microsofttranslator.com"
 
-    location = "eastus2"
+    location = AZURE_REGION
 
     path = '/translate'
     constructed_url = endpoint + path
@@ -69,14 +73,14 @@ def handle_translation(text):
     body = [{
         'text': text
     }]
-
+    
     request = requests.post(constructed_url, params=params, headers=headers, json=body)
+
+        
     response = request.json()
 
     translations = response[0]['translations']
  
-    print(f"Original Speech to: {text}")
-
     threads = []
     for translation in translations:
         thread = threading.Thread(target=process_translation, args=(translation,))
@@ -89,14 +93,15 @@ def handle_translation(text):
 
 def conversation_transcriber_session_started_cb(evt: speechsdk.SessionEventArgs):
     print('SessionStarted event')
+    print("Speak into your microphone.")
+
 
 def recognize_from_file():
     # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
-    speech_config = speechsdk.SpeechConfig(subscription="5a8ea0c813f144ac9efd5f877d4a46a4", region="eastus2")
+    speech_config = speechsdk.SpeechConfig(subscription=os.getenv('SPEECH_KEY'), region=AZURE_REGION)
     speech_config.speech_recognition_language="en-US"
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
 
-    print("Speak into your microphone.")
     audio_config = speech_recognizer.recognize_once_async().get()
 
     conversation_transcriber = speechsdk.transcription.ConversationTranscriber(speech_config=speech_config, audio_config=audio_config)
