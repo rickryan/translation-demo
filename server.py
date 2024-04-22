@@ -15,6 +15,7 @@ service = WebPubSubServiceClient.from_connection_string(connection_string, hub=h
 
 @app.route('/')
 def index():
+    # Adjust the path to locate the HTML file in the deployed environment
     return send_file('public/index.html')
 
 @app.route('/negotiate')
@@ -29,5 +30,7 @@ def negotiate():
 
     return jsonify({'url': token_url})
 
+# Run the Flask app using the host and port specified by Azure App Service
 if __name__ == '__main__':
-    app.run()
+    # Use 0.0.0.0 as the host and os.environ.get('PORT', 5000) as the port
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 5000))
