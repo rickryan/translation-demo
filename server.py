@@ -33,4 +33,4 @@ def negotiate():
 # Run the Flask app using the host and port specified by Azure App Service
 if __name__ == '__main__':
     # Use 0.0.0.0 as the host and os.environ.get('PORT', 5000) as the port
-    app.run(host='0.0.0.0', port=os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 8000))
