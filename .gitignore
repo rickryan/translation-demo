@@ -1,0 +1,9 @@
+*.pyc
+# virtual environments
+.venv/
+env/
+# Vscode settings files
+settings.json
+launch.json
+# my environment file for saving API keys
+.env
