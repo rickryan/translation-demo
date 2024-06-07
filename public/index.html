@@ -53,6 +53,12 @@
       </ul>
       <ul class="navbar-nav">
         <li class="nav-item">
+          <button class="clear-btn" type="button" onclick="clearTranslations()">Clear</button>
+        </li>
+        <li class="nav-item">
+          <button class="summarize-btn" type="button" onclick="summarizeTranslations()"">Summarize</button>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="#" onclick="increaseTextSize()"><i class="fas fa-plus"></i></a>
         </li>
         <li class="nav-item">
@@ -61,6 +67,15 @@
       </ul>
     </div>
   </nav>
+
+  <!-- Hidden English Text Container -->
+  <!-- Stores the english text for summarization -->
+  <div class="card" style="display: none;" id="source-container">
+    <div class="card-body text-wrap">
+    <h5 class="card-title">ENGLISH Translation</h5>
+    <div class="card-text translation-container text-wrap" id="en-container">Test of text to summarize</div>
+  </div>
+</div>
 
   <div class="container" id="output">
     <br>
@@ -88,6 +103,8 @@
 
     function updateLanguagesInQuery() {
       const selectedLanguages = $('#languageSelector').val();
+      // include english for the hidden container
+      selectedLanguages.push('en');
       const currentUrl = new URL(window.location.href);
       currentUrl.searchParams.delete('language');
       if (selectedLanguages) {
@@ -197,7 +214,7 @@
       $('#languageSelector').trigger('changed.bs.select');
     })();
 
-    function increaseTextSize() {
+function increaseTextSize() {
   const translationContainers = document.querySelectorAll('.translation-container');
   translationContainers.forEach(container => {
     const currentFontSize = parseFloat(window.getComputedStyle(container).fontSize);
@@ -211,6 +228,36 @@ function decreaseTextSize() {
     const currentFontSize = parseFloat(window.getComputedStyle(container).fontSize);
     container.style.fontSize = (currentFontSize - 1) + 'px';
   });
+}
+function clearTranslations() {
+  const translationContainers = document.querySelectorAll('.translation-container');
+  translationContainers.forEach(container => {
+    container.innerHTML = ""
+  });
+}
+async function summarizeTranslations() {
+  const sourceText = document.getElementById('en-container').innerHTML.toString()
+  const selectedLanguages = $('#languageSelector').val();
+  for (const language of selectedLanguages) {
+    //const container = document.getElementById(`${language}-container`);
+    // Send the POST request to the /summarize endpoint
+    const response = await fetch('/summarize', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({language : language, text : sourceText})
+    }); 
+    // Process the response
+    if (response.ok) {
+        const result = await response.json();
+        console.log(result)
+        console.log(result.summary)
+        document.getElementById(`${language}-container`).innerHTML = result.summary;
+    } else {
+        console.error('Error summarizing text:', response.statusText);
+    }
+  }
 }
   </script>
 </body>
