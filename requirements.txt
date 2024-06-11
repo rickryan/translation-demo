@@ -5,3 +5,4 @@ urllib3
 flask
 python-dotenv
 pip-system-certs
+openai

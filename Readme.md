@@ -14,7 +14,7 @@
 # Create venv
 python -m venv env
 # Active venv
-source ./env/bin/activate
+source .env/bin/activate
 # pip install
 pip install -r requirements.txt
 ```
@@ -36,7 +36,7 @@ Varaibles required:
 python server.py 
 ```
 
-The server is then started. Open `http://localhost:8080` in browser. If you use F12 to view the Network you can see the WebSocket connection is established.
+The server is then started. Open `http://localhost:5000` in browser. If you use F12 to view the Network you can see the WebSocket connection is established.
 
 ## Start the main app
 
@@ -47,4 +47,4 @@ source ./env/bin/activate
 python main.py
 ```
 
-Start typing messages and you can see these messages are transferred to the browser in real-time.
+The main app should use your system's default microphone.  Start speaking messages and you can see the messages are translated and transferred to the browser.

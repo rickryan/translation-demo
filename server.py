@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, jsonify, send_file
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from dotenv import load_dotenv
+from summarize import summarize
 
 load_dotenv()
 
@@ -19,7 +20,7 @@ service = WebPubSubServiceClient.from_connection_string(connection_string, hub=h
 @app.route('/')
 def index():
     return send_file('public/index.html')
-
+    
 @app.route('/negotiate')
 def negotiate():
     global service
@@ -31,6 +32,21 @@ def negotiate():
     token_url += '&' + '&'.join([f"{key}={value[0]}" for key, value in request.args.items()])
 
     return jsonify({'url': token_url})
+
+@app.route('/summarize', methods=['POST'])
+def create_summary():
+    # Extract 'language' and 'text' from the POST request's body
+    if not request.json or not 'language' in request.json or not 'text' in request.json:
+        return jsonify({'error': 'Missing data in request'}), 400
+
+    language = request.json['language']
+    text_to_summarize = request.json['text']
+
+    translated_summary = summarize(text_to_summarize, language)
+
+    return translated_summary
+    #return jsonify({'summary': translated_summary, 'language' : language})
+
 
 if __name__ == '__main__':
     app.run()
