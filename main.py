@@ -20,7 +20,10 @@ def conversation_transcriber_session_stopped_cb(evt: speechsdk.SessionEventArgs)
 def conversation_transcriber_transcribed_cb(evt: speechsdk.SpeechRecognitionEventArgs):
     print('TRANSCRIBED:')
     if evt.result.reason == speechsdk.ResultReason.RecognizedSpeech:
-        handle_translation(evt.result.text)
+        if len(evt.result.text.strip()) > 0:
+            handle_translation(evt.result.text)
+        else:
+            print('empty text')
     elif evt.result.reason == speechsdk.ResultReason.NoMatch:
         print('\tNOMATCH: Speech could not be TRANSCRIBED: {}'.format(evt.result.no_match_details))
 
@@ -31,7 +34,7 @@ def handle_publish(translations):
 
     service = WebPubSubServiceClient.from_connection_string(connection_string, hub=hub_name)
     res = service.send_to_all(message, content_type='text/plain')
-    print(res)
+    #print(res)
 
 def process_translation(translation):
     target_language = translation['to']
@@ -44,7 +47,10 @@ def process_translation(translation):
     }
 
     json_text = json.dumps(data)
-    handle_publish(json_text)
+    if len(translated_text.strip()) > 0:
+        handle_publish(json_text)
+    else:
+        print('translation empty')
 
 def handle_translation(text):
     key = os.getenv('TRANSLATOR_KEY')
@@ -58,7 +64,8 @@ def handle_translation(text):
     params = {
         'api-version': '3.0',
         'from': 'en',
-        'to': ['en','bg', 'es','ar','hi', 'zh-Hans','fr']
+        #'to': ['en','bg', 'es','ar','hi', 'zh-Hans','fr']
+        'to': ['en','es','ar']
     }
 
     headers = {
@@ -99,6 +106,7 @@ def conversation_transcriber_session_started_cb(evt: speechsdk.SessionEventArgs)
 def recognize_from_file():
     # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
     speech_config = speechsdk.SpeechConfig(subscription=os.getenv('SPEECH_KEY'), region=AZURE_REGION)
+    speech_config.endpoint_silence_timeout_ms = 0
     speech_config.speech_recognition_language="en-US"
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
 

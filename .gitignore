@@ -7,3 +7,5 @@ settings.json
 launch.json
 # my environment file for saving API keys
 .env
+# test directory for keeping any materials
+test/
