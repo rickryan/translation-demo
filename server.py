@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, redirect, request, jsonify, send_file
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from dotenv import load_dotenv
 from summarize import summarize
@@ -17,9 +17,14 @@ if not connection_string:
 
 service = WebPubSubServiceClient.from_connection_string(connection_string, hub=hub_name)
 
+
 @app.route('/')
 def index():
     return send_file('public/index.html')
+
+@app.route('/test')
+def testmode():
+    return redirect('/?testmode=true', code=302)
     
 @app.route('/negotiate')
 def negotiate():
