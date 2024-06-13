@@ -1,8 +1,9 @@
 import os
-from flask import Flask, redirect, request, jsonify, send_file
+from flask import Flask, redirect, render_template, request, jsonify, send_file
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from dotenv import load_dotenv
 from summarize import summarize
+import webpubsubclient
 
 load_dotenv()
 
@@ -10,25 +11,28 @@ app = Flask(__name__)
 
 # Initialize Web PubSub service client with connection string and hub name from environment variables
 connection_string = os.getenv("PUBSUB_ENDPOINT")
-hub_name = os.getenv("PUBSUB_HUBNAME", "sample_stream")  # Default hub name is 'sample_stream'
-
 if not connection_string:
     raise ValueError("WEBPUBSUB_CONNECTION_STRING environment variable not set.")
 
-service = WebPubSubServiceClient.from_connection_string(connection_string, hub=hub_name)
+# This function dynamically creates a service client based on the site_id
+def get_service_client_for_site(site_id):
+    hub_name = f"{site_id}_stream"  # Example of dynamically setting the hub name
+    return WebPubSubServiceClient.from_connection_string(connection_string, hub=hub_name)
 
 
-@app.route('/')
-def index():
-    return send_file('public/index.html')
+@app.route('/<site_id>')
+def index(site_id=None):
+    return render_template('index.html', site_id=site_id)
+    #return send_file('public/index.html')
 
 @app.route('/test')
 def testmode():
     return redirect('/?testmode=true', code=302)
     
-@app.route('/negotiate')
-def negotiate():
-    global service
+@app.route('/<site_id>/negotiate')
+def negotiate(site_id):
+    print(f'Negotiating for site {site_id}')
+    service = webpubsubclient.get_service_client_for_site(site_id)
     roles = ['webpubsub.sendToGroup.stream', 'webpubsub.joinLeaveGroup.stream']
     token = service.get_client_access_token(roles=roles)
 

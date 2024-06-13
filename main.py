@@ -7,6 +7,8 @@ from azure.messaging.webpubsubservice import WebPubSubServiceClient
 import threading
 from dotenv import load_dotenv
 
+import webpubsubclient
+
 load_dotenv()
 AZURE_REGION = os.getenv('AZURE_REGION')
 
@@ -27,16 +29,18 @@ def conversation_transcriber_transcribed_cb(evt: speechsdk.SpeechRecognitionEven
     elif evt.result.reason == speechsdk.ResultReason.NoMatch:
         print('\tNOMATCH: Speech could not be TRANSCRIBED: {}'.format(evt.result.no_match_details))
 
-def handle_publish(translations):
+def handle_publish(translations, site_id='site1'):
+    
     connection_string = os.getenv('PUBSUB_ENDPOINT')
     hub_name = os.getenv('PUBSUB_HUBNAME')
     message = translations
 
-    service = WebPubSubServiceClient.from_connection_string(connection_string, hub=hub_name)
+    #service = WebPubSubServiceClient.from_connection_string(connection_string, hub=hub_name)
+    service = webpubsubclient.get_service_client_for_site(site_id)
     res = service.send_to_all(message, content_type='text/plain')
-    #print(res)
+    print(res)
 
-def process_translation(translation):
+def process_translation(translation, site_id='site1'):
     target_language = translation['to']
     translated_text = translation['text']
     print(f"Translation to {target_language}: {translated_text}")
@@ -48,11 +52,11 @@ def process_translation(translation):
 
     json_text = json.dumps(data)
     if len(translated_text.strip()) > 0:
-        handle_publish(json_text)
+        handle_publish(json_text, site_id)
     else:
         print('translation empty')
 
-def handle_translation(text):
+def handle_translation(text, site_id='site1'):
     key = os.getenv('TRANSLATOR_KEY')
     endpoint = "https://api.cognitive.microsofttranslator.com"
 
@@ -90,7 +94,7 @@ def handle_translation(text):
  
     threads = []
     for translation in translations:
-        thread = threading.Thread(target=process_translation, args=(translation,))
+        thread = threading.Thread(target=process_translation, args=(translation, site_id))
         threads.append(thread)
         thread.start()
 
@@ -106,7 +110,8 @@ def conversation_transcriber_session_started_cb(evt: speechsdk.SessionEventArgs)
 def recognize_from_file():
     # This example requires environment variables named "SPEECH_KEY" and "SPEECH_REGION"
     speech_config = speechsdk.SpeechConfig(subscription=os.getenv('SPEECH_KEY'), region=AZURE_REGION)
-    speech_config.endpoint_silence_timeout_ms = 0
+    #speech_config.set_property_by_name("SpeechServiceResponse_StablePartialResultThreshold", "5")
+    speech_config.endpoint_silence_timeout_ms = 1
     speech_config.speech_recognition_language="en-US"
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
 
