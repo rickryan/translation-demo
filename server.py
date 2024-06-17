@@ -3,7 +3,7 @@ from flask import Flask, redirect, render_template, request, jsonify, send_file
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from dotenv import load_dotenv
 from summarize import summarize
-import webpubsubclient
+from webpubsubclient import WebPubSubClient
 
 load_dotenv()
 
@@ -32,7 +32,7 @@ def testmode():
 @app.route('/<site_id>/negotiate')
 def negotiate(site_id):
     print(f'Negotiating for site {site_id}')
-    service = webpubsubclient.get_service_client_for_site(site_id)
+    service = WebPubSubClient(connection_string, site_id)
     roles = ['webpubsub.sendToGroup.stream', 'webpubsub.joinLeaveGroup.stream']
     token = service.get_client_access_token(roles=roles)
 

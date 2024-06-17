@@ -6,8 +6,7 @@ if not connection_string:
     raise ValueError("WEBPUBSUB_CONNECTION_STRING environment variable not set.")
 
 class WebPubSubClient:
-    def __init__(self, site_id):
-        print(f'Creating WebPubSubClient for site {site_id}')
+    def __init__(self, connection_string, site_id):
         self.site_id = site_id
         self.hub_name = f"{site_id}_stream"  # Example of dynamically setting the hub name
         self.service = WebPubSubServiceClient.from_connection_string(connection_string, hub=self.hub_name)
@@ -27,6 +26,3 @@ class WebPubSubClient:
 
     def leave_group(self, group_name, user_id):
         self.service.remove_user_from_group(group_name, user_id)
-
-def get_service_client_for_site(site_id):
-    return WebPubSubClient(site_id)
