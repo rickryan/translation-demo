@@ -104,8 +104,6 @@
 
     function updateLanguagesInQuery() {
       const selectedLanguages = $('#languageSelector').val();
-      // include english for the hidden container
-      selectedLanguages.push('en');
       const currentUrl = new URL(window.location.href);
       currentUrl.searchParams.delete('language');
       if (selectedLanguages) {
@@ -171,6 +169,9 @@
       ws.onmessage = event => {
         const parsedData = JSON.parse(event.data);
         console.log(parsedData);
+        if (parsedData.type !== 'message') {
+          return;
+        }
 
         const data = JSON.parse(parsedData.data);
 
@@ -195,6 +196,8 @@
         } else {
           // Append translation to the appropriate div
           const selectedLanguages = $('#languageSelector').val();
+          // always include the hidden english container
+          selectedLanguages.push('en');
           if (!queryStringLanguage || selectedLanguages.includes(language)) {
             const container = document.getElementById(`${language}-container`);
             if (container) {

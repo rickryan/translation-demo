@@ -10,9 +10,9 @@ The base URL for these endpoints is `http://localhost:5000` when running the app
 
 ### Home Page
 
-- **Path**: `/`
+- **Path**: `/<site_id>`
 - **Method**: GET
-- **Functionality**: Serves the main index.html page of the application.
+- **Functionality**: Serves the main index.html page of the application for a given site
 - **Parameters**: Optional multiple specifications of languages. e.g., `/?language=fr&language=es`
 - **Response**: The `index.html` file from the `public` directory.
 
@@ -20,15 +20,15 @@ The base URL for these endpoints is `http://localhost:5000` when running the app
 
 - **Path**: `/test`
 - **Method**: GET
-- **Functionality**: Redirects to the home page with a `testmode=true` query parameter to enable test mode.
+- **Functionality**: Redirects to the home page to a test_site with a `testmode=true` query parameter to enable test mode.
 - **Parameters**: None
-- **Response**: A 302 redirect to `/?testmode=true`.
+- **Response**: A 302 redirect to `/test_site?testmode=true`.
 
 ### Negotiate
 
-- **Path**: `/negotiate`
+- **Path**: `/<site_di>/negotiate`
 - **Method**: GET
-- **Functionality**: Generates a client access token for connecting to the Web PubSub service with specific roles.
+- **Functionality**: Generates a client access token for connecting to the Web PubSub service with specific roles for the given site_id.
 - **Parameters**: Any additional query string parameters are added to the token URL.
 - **Response**: A JSON object containing the `url` with the access token.
   ```json

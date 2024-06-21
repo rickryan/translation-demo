@@ -36,10 +36,10 @@ class Transcriber:
             time.sleep(.5)
 
     def handle_translation(self, text):
+        print(f'Translating:{text}')
         try:
-            recognized_text = self.speech_processor.recognize_speech()
-            if recognized_text:
-                translations = self.translator.translate(recognized_text)
+            if text:
+                translations = self.translator.translate(text)
                 for translation in translations:
                     data = {
                         "language": translation['to'],
@@ -73,6 +73,9 @@ class Transcriber:
 
     def stop_cb(self, args):
         self.transcribing_stop = True
+        
+    def is_transcribing(self):
+        return not self.transcribing_stop
 
 # Usage example
 # Assuming recognize_from_file() is supposed to be replaced or refactored to use this class

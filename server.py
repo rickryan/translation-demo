@@ -2,8 +2,8 @@ import os
 from flask import Flask, redirect, render_template, request, jsonify, send_file
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from dotenv import load_dotenv
-from summarize import summarize
-from webpubsubclient import WebPubSubClient
+from src.genai.summarize import summarize
+from src.pubsub.webpubsubclient import WebPubSubClient
 
 load_dotenv()
 
@@ -26,8 +26,8 @@ def index(site_id=None):
     #return send_file('public/index.html')
 
 @app.route('/test')
-def testmode():
-    return redirect('/?testmode=true', code=302)
+def testmode(site_id=None):
+    return redirect('/test_site?testmode=true', code=302)
     
 @app.route('/<site_id>/negotiate')
 def negotiate(site_id):

@@ -40,7 +40,7 @@ Varaibles required:
 python server.py 
 ```
 
-The server is then started. Open `http://localhost:5000` in browser. If you use F12 to view the Network you can see the WebSocket connection is established.
+The server is then started. Open `http://localhost:5000/<sitename>` in browser. You can use any name as sitename.  If you use F12 to view the Network you can see the WebSocket connection is established.
 
 The server may also be accessed via an API via the endpoints documented in [api-definitions.md](/api-definitions.md)
 
@@ -55,3 +55,6 @@ python main.py
 
 The main app should use your system's default microphone.  Start speaking messages and you can see the messages are translated and transferred to the browser.
 
+## Test Mode
+
+There is a test mode available which creates a test_site and displays the english text that it recorded via the microphone.  It also prefills the the english text box with an example recording to enable testing of the summarization without having to speak the complete text into the microphone.  To go to the test site open `http://localhost:5000/test` in a browser.
