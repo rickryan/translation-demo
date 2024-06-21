@@ -50,9 +50,10 @@ Run:
 
 ```bash
 source ./env/bin/activate
-python main.py
+python main.py <sitename>
 ```
 
+The sitename should be the same as that used when accessing the translation display through the browser.  If no site is provided it defaluts to the defalut site: test_site
 The main app should use your system's default microphone.  Start speaking messages and you can see the messages are translated and transferred to the browser.
 
 ## Test Mode
