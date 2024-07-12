@@ -1,7 +1,9 @@
 azure-messaging-webpubsubservice==1.0.0
+azure.identity
 websockets
 azure-cognitiveservices-speech
 urllib3
 flask
 python-dotenv
 pip-system-certs
+openai
