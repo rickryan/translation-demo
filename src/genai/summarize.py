@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 from azure.identity import DefaultAzureCredential
+import logging
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
@@ -50,7 +52,7 @@ def summarize(text: str, language: str) -> dict:
     # convert the result string that is json to an object
     result = json.loads(result)
     result['language'] = language
-    print(type(result))
+    logger.debug(type(result))
     
     return result
 

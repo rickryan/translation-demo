@@ -10,24 +10,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-  <style>
-    #output {
-      white-space: pre;
-      font-family: monospace;
-    }
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_index.css') }}">
 
-    .translation-container {
-      word-wrap: break-word; /* Force translations to wrap */
-      overflow-y: auto; /* Add vertical scroll bar */
-      max-height: 450px; /* Limit height to prevent excessive space */
-    }
-
-    .card {
-      height: 500px; /* Set height of the card */
-    }
-
-
-  </style>
 </head>
 
 <body>

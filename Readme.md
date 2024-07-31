@@ -1,5 +1,5 @@
 # Real-time Translation using Azure Speech, Translation and PubSub Services
-
+This application is a real-time translation and speech-to-text demo. It utilizes Azure services such as Web PubSub, Translator, Speech, and OpenAI to enable translation, transfer and summarization of spoken messages to a browser. The server can be started and accessed via API endpoints.  The output is displayed on the endpoint index.html.  Ausio input via a microphone may be accessed via a web app at speaker.html or running a local app, main.py. Additionally, there is a test mode available for recording and summarizing English text.
 
 ## Prerequisites
 
@@ -8,6 +8,7 @@
 3. Create an Azure Translator resource
 4. Create an Azure Speech services resource
 5. Create an Azure openAI services resource
+6. (optional) Install ffmpeg if you plan to use the the web app and page speaker.html for input
 
 ## Setup
 
@@ -19,6 +20,9 @@ source .env/bin/activate
 # pip install
 pip install -r requirements.txt
 ```
+
+Install ffmpeg on the server machine if you intend to use the web app and page speaker.html for audio input.
+*Note: ffmpeg is required to convert the audio from a browser in .webm format to .wav format required by Azure Speech services.*
 
 ## Environment Setup
 
@@ -44,7 +48,9 @@ The server is then started. Open `http://localhost:5000/<sitename>` in browser. 
 
 The server may also be accessed via an API via the endpoints documented in [api-definitions.md](/api-definitions.md)
 
-## Start the main app
+Audio input may be done through the a local python app, main.py, or via the web page `http://localhost:5000/<sitename>/speaker`
+
+## To start the local app, main.py
 
 Run:
 

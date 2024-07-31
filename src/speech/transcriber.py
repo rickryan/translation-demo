@@ -1,14 +1,15 @@
 import json
 import time
 import azure.cognitiveservices.speech as speechsdk
-from .speechprocessor import SpeechProcessor
-
+from .socketspeechprocessor import SpeechProcessor
+import logging
+logger = logging.getLogger(__name__)
 class Transcriber:
     def __init__(self, speech_processor: SpeechProcessor, translator, publisher):
         self.speech_processor = speech_processor
         speech_config = speech_processor.speech_config
         self.speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
-        audio_config = self.speech_recognizer.recognize_once_async().get()
+        audio_config = self.speech_processor.audio_config
         self.conversation_transcriber = speechsdk.transcription.ConversationTranscriber(speech_config=speech_config, audio_config=audio_config)
         self.publisher = publisher
         self.translator = translator
@@ -36,7 +37,7 @@ class Transcriber:
             time.sleep(.5)
 
     def handle_translation(self, text):
-        print(f'Translating:{text}')
+        logger.debug(f'Translating:{text}')
         try:
             if text:
                 translations = self.translator.translate(text)
@@ -46,46 +47,32 @@ class Transcriber:
                         "translation": translation['text']
                     }
                     self.publisher.send_to_all(json.dumps(data))
-                    print(f"Published translation to {translation['to']}: {translation['text']}")
+                    logger.debug(f"Published translation to {translation['to']}: {translation['text']}")
         except Exception as e:
-            print(f"An error occurred: {e}")
+            logger.error(f"An error occurred: {e}")
 
     # Callback methods
     def conversation_transcriber_transcribed_cb(self, evt: speechsdk.SpeechRecognitionEventArgs):
-        print('TRANSCRIBED:')
+        logger.debug('TRANSCRIBED:')
         if evt.result.reason == speechsdk.ResultReason.RecognizedSpeech:
             if len(evt.result.text.strip()) > 0:
                 self.handle_translation(evt.result.text)
             else:
-                print('empty text')
+                logger.debug('empty text')
         elif evt.result.reason == speechsdk.ResultReason.NoMatch:
-            print('\tNOMATCH: Speech could not be TRANSCRIBED: {}'.format(evt.result.no_match_details))
+            logger.warn('\tNOMATCH: Speech could not be TRANSCRIBED: {}'.format(evt.result.no_match_details))
 
     def conversation_transcriber_session_started_cb(self, args):
-        print('SessionStarted event')
-        print("Speak into your microphone.")
+        logger.info('SessionStarted event')
 
     def conversation_transcriber_session_stopped_cb(self, args):
-        print('SessionStopped event')
+        logger.info('SessionStopped event')
 
     def conversation_transcriber_recognition_canceled_cb(self, args):
-        print('Canceled event')
+        logger.info('Canceled event')
 
     def stop_cb(self, args):
         self.transcribing_stop = True
         
     def is_transcribing(self):
         return not self.transcribing_stop
-
-# Usage example
-# Assuming recognize_from_file() is supposed to be replaced or refactored to use this class
-def recognize_from_file():
-    transcriber = Transcriber()
-    transcriber.start_transcribing_async()
-    transcriber.stop_transcribing_async()
-
-if __name__ == '__main__':
-    try:
-        recognize_from_file()
-    except Exception as e:
-        print(f"An error occurred: {e}")
