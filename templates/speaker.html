@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Speaker Page</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_speaker.css') }}">
 </head>
@@ -14,6 +15,11 @@
             <button id="clearBtn">Clear</button>
         </div>
         <div>
+            <label for="languageInputSelect">Select Input Language:</label>
+            <select id="languageInputSelect">
+            </select>
+        </div>
+        <div>
             <label for="transcriptionText">Transcription:</label>
             <textarea id="transcriptionText" rows="4" cols="50"></textarea>
         </div>
@@ -22,11 +28,8 @@
             <textarea id="translationText" rows="4" cols="50"></textarea>
         </div>
         <div>
-            <label for="languageSelect">Select Translation Language:</label>
-            <select id="languageSelect">
-                <option value="es">Spanish</option>
-                <option value="fr">French</option>
-                <!-- Add more languages as needed -->
+            <label for="languageTrnaslationSelect">Select Translation Language:</label>
+            <select id="languageTranslationSelect">
             </select>
         </div>
     </div>
@@ -35,6 +38,7 @@
     <script>
         var site_id = "{{ site_id }}";  // Use the site_id variable in your JavaScript
     </script>
+    <script src="{{ url_for('static', filename='js/init_speaker_ui.js') }}"></script>
     <script src="{{ url_for('static', filename='js/speaker.js') }}"></script>
 </body>
 </html>

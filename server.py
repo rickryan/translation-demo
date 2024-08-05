@@ -1,4 +1,5 @@
 import os
+import json
 from flask import Flask, redirect, render_template, request, jsonify
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from dotenv import load_dotenv
@@ -34,7 +35,20 @@ connection_string = PUBSUB_ENDPOINT
 if not connection_string:
     raise ValueError("WEBPUBSUB_CONNECTION_STRING environment variable not set.")
 
-
+# Load languages from JSON file
+with open('languages.json', 'r') as f:
+    languages = json.load(f)['languages']
+    # create an array of language codes
+    language_codes = [lang['code'] for lang in languages]
+    
+# returns the list of languages
+# for the dropdown in the UI
+# returns a JSON object
+# Note: currently the same for all sites
+# but uses site_id so it can be customized per site    
+@app.route('/<site_id>/languages')
+def get_languages(site_id=None):
+    return jsonify(languages)
 
 @app.route('/<site_id>')
 def index(site_id=None):
@@ -79,9 +93,9 @@ def test_connect():
     logger.info('Client connected')
 
 @socketio.on('audio_start')
-def start_audio_stream(site):
+def start_audio_stream(site, source_language):
     try:
-        audio_handler.start_audio_stream(site, languages, target_language)
+        audio_handler.start_audio_stream(site, language_codes, source_language)
         emit('audio_started', {'status': 'success'})
     except Exception as e:
         emit('audio_started', {'status': 'error', 'message': str(e)})

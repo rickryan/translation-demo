@@ -7,7 +7,7 @@ class SpeechProcessor:
     def __init__(self, speech_key, region, audio_stream, target_language="en"):
         self.speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=region)
         self.translation_config = speechsdk.translation.SpeechTranslationConfig(subscription=speech_key, region=region)
-        self.translation_config.speech_recognition_language = "en-US"
+        self.translation_config.speech_recognition_language = target_language
         self.translation_config.add_target_language(target_language)
         # Create an audio configuration from the provided audio stream
         self.audio_config = speechsdk.audio.AudioConfig(stream=audio_stream)

@@ -5,8 +5,21 @@ body {
     box-sizing: border-box;
 }
 
-.button-group {
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
     text-align: center;
+    margin-bottom: 20px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
@@ -36,11 +49,30 @@ label {
     font-weight: bold;
 }
 
-textarea {
+select, textarea {
     width: 100%;
     padding: 10px;
-    margin-bottom: 20px;
+    font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 4px;
+}
+
+
+select {
+    width: fit-content;
+}
+
+textarea {
     resize: vertical;
+}
+
+@media (max-width: 768px) {
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+    }
+    .button-group button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
 }
