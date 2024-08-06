@@ -25,11 +25,6 @@
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
           <select id="languageSelector" class="selectpicker" multiple data-selected-text-format="count > 2">
-            <option value="fr">French</option>
-            <option value="es">Spanish</option>
-            <option value="bg">Bulgarian</option>
-            <option value="ar">Arabic</option>
-            <!-- Add more languages here -->
           </select>
         </li>
       </ul>
@@ -64,7 +59,15 @@
     <br>
   
   </div>
-
+  <!-- add a footer with links to the speaker and qr code pages -->
+  <footer class="footer bg-light py-3">
+    <div class="container text-center">
+      <span class="text-muted">
+        <a href="/{{site_id}}/speaker" class="mx-3">Speaker Page</a>
+        <a href="/{{site_id}}/display_qr_codes" class="mx-3">QR Codes</a>
+      </span>
+    </div>
+  </footer>
   <!-- Bootstrap JS, Popper.js, and jQuery -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

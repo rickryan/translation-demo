@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <title>Language QR Codes for {{site_id}}</title>
+</head>
+<body>
+    <h1>Language QR Codes for {{site_id}}</h1>
+    <button onclick="history.back()" class="btn btn-primary mt-3">Go Back</button>
+    <div id="qr-codes-container"></div>
+    <script>
+        var site_id = "{{ site_id }}";  // Use the site_id variable in your JavaScript
+    </script>
+    <script src="{{ url_for('static', filename='js/display_qr_codes.js') }}"></script>
+    </body>
+</html>

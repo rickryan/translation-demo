@@ -8,4 +8,5 @@ python-dotenv
 pip-system-certs
 openai
 flask-socketio
-pydub
+qrcode
+pillow

@@ -119,9 +119,11 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         // Set selected languages from query string
-        const queryStringLanguage = getParameterByName('language');
+        const urlParams = new URLSearchParams(window.location.search);
+        const languages = urlParams.getAll('language');
+        const queryStringLanguage = languages.length ? languages : null;
         if (queryStringLanguage) {
-            $('#languageSelector').selectpicker('val', [queryStringLanguage]);
+            $('#languageSelector').selectpicker('val', queryStringLanguage);
         }
 
         // Trigger language selection change after setting selected languages
