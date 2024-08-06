@@ -11,6 +11,12 @@ from src.speech.transcriber import Transcriber
 
 # Load environment variables
 load_dotenv()
+from src.logutils.logconfig import configure_logging
+configure_logging()
+
+import logging
+logger = logging.getLogger(__name__)
+
 AZURE_REGION = os.getenv('AZURE_REGION')
 TRANSLATOR_KEY = os.getenv('TRANSLATOR_KEY')
 PUBSUB_ENDPOINT = os.getenv('PUBSUB_ENDPOINT')

@@ -7,3 +7,6 @@ flask
 python-dotenv
 pip-system-certs
 openai
+flask-socketio
+qrcode
+pillow

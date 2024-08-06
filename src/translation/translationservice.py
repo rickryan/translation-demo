@@ -1,6 +1,8 @@
 # Translation and Publishing Services
 import requests
 import uuid
+import logging
+logger = logging.getLogger(__name__)
 
 class TranslationService:
     def __init__(self, key, region, languages=['en', 'es', 'ar']):

@@ -1,0 +1,15 @@
+/* styles for index.html */
+#output {
+    white-space: pre;
+    font-family: monospace;
+}
+
+.translation-container {
+    word-wrap: break-word; /* Force translations to wrap */
+    overflow-y: auto; /* Add vertical scroll bar */
+    max-height: 450px; /* Limit height to prevent excessive space */
+}
+
+.card {
+    height: 500px; /* Set height of the card */
+}
