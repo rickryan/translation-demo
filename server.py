@@ -1,7 +1,6 @@
 import os
 import json
 from flask import Flask, redirect, render_template, request, jsonify
-from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from dotenv import load_dotenv
 from src.genai.summarize import summarize
 from src.pubsub.webpubsubclient import WebPubSubClient
@@ -23,8 +22,6 @@ target_language = 'fr'  # For French translation, for example
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins='*')
-
-import logging
 
 logger = logging.getLogger(__name__)
 site_id = 'test_site'
