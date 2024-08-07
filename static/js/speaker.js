@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }));
             };
             ws.onmessage = (msg) => {
-                console.log(msg.data);
                 const parsedData = JSON.parse(msg.data);
                 if (parsedData.type !== 'message') {
                     return;
