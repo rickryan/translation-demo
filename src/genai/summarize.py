@@ -7,8 +7,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
-deployment = os.environ["CHAT_COMPLETIONS_DEPLOYMENT_NAME"]
+endpoint = os.getenv["AZURE_OPENAI_ENDPOINT"]
+deployment = os.getenv["CHAT_COMPLETIONS_DEPLOYMENT_NAME"]
 api_key = os.getenv("OPENAI_API_KEY")
 api_version = "2024-02-01"
 token_provider = DefaultAzureCredential()
