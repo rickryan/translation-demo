@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var mediaRecorder = null;
 
     // Connect to the socket server
-    const socket = io.connect('http://' + document.location.hostname + ':' + location.port);
+    const socket = io.connect('https://' + document.location.hostname + ':' + location.port);
     console.log('Document domain:', document.location.hostname);
     console.log('Location port:', location.port);
     console.log('Socket:', socket);
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             let res = await fetch(`/${site_id}/negotiate`)
             let data = await res.json();
+            console.log('Negotiate data:', data);
             let ws = new WebSocket(data.url, 'json.webpubsub.azure.v1');
             ws.onopen = () => {
                 console.log('connected to translation pub/sub service');
