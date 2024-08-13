@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.history.pushState({}, '', currentUrl);
     }
 
+
     $('#languageSelector').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
         updateLanguagesInQuery();
         const selectedLanguages = $('#languageSelector').val();
@@ -131,7 +132,6 @@ document.addEventListener('DOMContentLoaded', function () {
     })();
 
     // Check if 'testmode' query parameter is present and show the source-container visible if it is
-    // Check if 'testmode' query parameter is present
     const urlParams = new URLSearchParams(window.location.search);
     const testMode = urlParams.get('testmode');
 

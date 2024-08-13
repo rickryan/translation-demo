@@ -4,6 +4,23 @@ FROM python:3.9
 # Set the working directory inside the container
 WORKDIR /app
 
+# Define a build argument to control copying of a .env file
+# with environment variables into the container
+# when running locally or in a development environment build with the --build-arg flag
+# Example: docker build --build-arg COPY_ENV_FILE=true -t my-flask-app .
+# otherwise, the .env file will not be copied into the container
+# Example: docker build -t my-flask-app .
+ARG COPY_ENV_FILE=false
+# Unconditionally copy the .env file to a temporary location
+COPY .env /tmp/.env
+
+# Conditionally move the .env file to the desired location based on the build argument
+RUN if [ "$COPY_ENV_FILE" = "true" ]; then \
+        mv /tmp/.env /app/.env; \
+    else \
+        rm /tmp/.env; \
+    fi
+
 # Copy the requirements file into the container
 COPY requirements.txt .
 
@@ -22,7 +39,13 @@ RUN echo "pcm.!default { type plug slave.pcm "null" }" > /etc/asound.conf && \
     echo "ctl.!default { type hw card 0 }" >> /etc/asound.conf
 
 # Copy the Flask app files into the container
-COPY . .
+#COPY . .
+COPY src src
+COPY static static
+COPY templates templates
+COPY languages.json .
+COPY server.py .
+
 
 # Expose the port that the Flask app will run on
 EXPOSE 5000

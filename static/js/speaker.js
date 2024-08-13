@@ -18,8 +18,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var stream; // need a global here to stop the stream later
     var mediaRecorder = null;
 
-    // Connect to the socket server
-    const socket = io.connect('https://' + document.location.hostname + ':' + location.port);
+    // Determine the protocol to use for the socket connection
+    // this will create an http connection on a local server for testing and a https connection on a deployed server
+    // the audio stream will not work on a http connection unless it is on the localhost
+    // the audio stream will work on a https connection
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const socket = io.connect(`${protocol}://${document.location.hostname}:${location.port}`);
     console.log('Document domain:', document.location.hostname);
     console.log('Location port:', location.port);
     console.log('Socket:', socket);

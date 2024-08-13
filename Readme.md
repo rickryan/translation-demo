@@ -1,5 +1,5 @@
 # Real-time Translation using Azure Speech, Translation and PubSub Services
-This application is a real-time translation and speech-to-text demo. It utilizes Azure services such as Web PubSub, Translator, Speech, and OpenAI to enable translation, transfer and summarization of spoken messages to a browser. The server can be started and accessed via API endpoints.  The output is displayed on the endpoint index.html.  Ausio input via a microphone may be accessed via a web app at speaker.html or running a local app, main.py. Additionally, there is a test mode available for recording and summarizing English text.
+This application is a real-time translation and speech-to-text demo. It utilizes Azure services such as Web PubSub, Translator, Speech, and OpenAI to enable translation, transfer and summarization of spoken messages to a browser. The server can be started and accessed via API endpoints.  The output is displayed on the endpoint index.html.  Audio input via a microphone may be accessed via a web app at speaker.html or running a local app, main.py. Additionally, there is a test mode available for recording and summarizing English text.
 
 ## Prerequisites
 
@@ -65,3 +65,17 @@ The main app should use your system's default microphone.  Start speaking messag
 ## Test Mode
 
 There is a test mode available which creates a test_site and displays the english text that it recorded via the microphone.  It also prefills the the english text box with an example recording to enable testing of the summarization without having to speak the complete text into the microphone.  To go to the test site open `http://localhost:5000/test` in a browser.
+
+## Docker Build
+
+The entire application can be built withi a docker container.  The docker build supports a command line arguemnt that will copy a .env file which contains the [environment variables](#environment-setup) into the container for local testing.  For production deployment the container should be built without the .env file (the default build) and the environment variables provided by the host.
+
+To build for production:
+```bash
+docker build -t my-translator-app .
+```
+
+To build and use a .env file for testing:
+```bash
+docker build --build-arg COPY_ENV_FILE=true -t my-translator-app .
+```
