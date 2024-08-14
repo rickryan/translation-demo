@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Selection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Translation Application</h1>
+        <p>Please choose a site from the list or input a new site name to proceed.</p>
+        
+        <form method="POST" action="/site_selection">
+            <label for="site_id">Select or Enter Site ID:</label>
+            <input type="text" id="site_id" name="site_id" required>
+            <button type="submit">Go</button>
+        </form>
+
+    <!--
+        <h2>How to Use the Application</h2>
+        <p>The application provides various functionalities including real-time translation services.</p>
+        <p>Here are some of the key features:</p>
+        <h3>Translation App</h3>
+        <p>To use the translation app, navigate to:</p>
+        <code>/&lt;site_id&gt;/</code>
+        <p>Example: <code>/test_site/</code></p>
+
+        <h3>Speaker Page</h3>
+        <p>To use the speaker page, navigate to:</p>
+        <code>/&lt;site_id&gt;/speaker</code>
+        <p>Example: <code>/test_site/speaker</code></p>
+
+        
+        <h3>QR Codes for a Site</h3>
+        <p>To view a page containing QR codes for a specific site, navigate to:</p>
+        <code>/&lt;site_id&gt;/display_qr_codes</code>
+        <p>Example: <code>/test_site/display_qr_codes</code></p>
+        <p>Each QR code will redirect to the translation app for the corresponding site and a single language.</p>
+    -->
+    </div>
+</body>
+</html>

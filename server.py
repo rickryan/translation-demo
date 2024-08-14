@@ -46,6 +46,17 @@ with open('languages.json', 'r') as f:
 def get_language_dict_for_site(site_id):
     return languages
 
+@app.route('/site_selection', methods=['GET', 'POST'])
+def site_selection():
+    if request.method == 'POST':
+        site_id = request.form.get('site_id')
+        return redirect(f'/{site_id}')
+    return render_template('site_selection.html')
+
+@app.route('/', methods=['GET'])
+def home():
+    return render_template('site_selection.html')
+
 # route that returns the list of languages for the specified site
 # returns a JSON object of the form:
 # [{"code": "en", "name": "English"}, ...]

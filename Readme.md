@@ -44,7 +44,7 @@ Varaibles required:
 python server.py 
 ```
 
-The server is then started. Open `http://localhost:5000/<sitename>` in browser. You can use any name as sitename.  If you use F12 to view the Network you can see the WebSocket connection is established.
+The server is then started. Open the home page `http://localhost:5000` in a browser.  On the page enter any name for a site and click the 'Go' button.  You will be taken to the page `http://localhost:5000/<sitename>` in browser. You can use any name as sitename.  If you use F12 to view the Network you can see the WebSocket connection is established.
 
 The server may also be accessed via an API via the endpoints documented in [api-definitions.md](/api-definitions.md)
 

@@ -9,6 +9,12 @@ The base URL for these endpoints is `http://localhost:5000` when running the app
 ## Page Endpoints
 
 ### Home Page
+- **Path**: `/`
+- **Method**: GET
+- **Functionality**: Serves the the site_selection page of the application to allow the selection of a site
+- **Response**: The `site_selection.html` template.
+
+### Site Page
 - **Path**: `/<site_id>`
 - **Method**: GET
 - **Functionality**: Serves the main index.html page of the application for a given site
