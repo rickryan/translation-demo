@@ -11,15 +11,13 @@ WORKDIR /app
 # otherwise, the .env file will not be copied into the container
 # Example: docker build -t my-flask-app .
 ARG COPY_ENV_FILE=false
-# Unconditionally copy the .env file to a temporary location
-COPY .env /tmp/.env
-
-# Conditionally move the .env file to the desired location based on the build argument
+# copy the .env file if it exists and move it to the proper location if COPY_ENV_FILE is true
+COPY .en[v] /tmp/.env
 RUN if [ "$COPY_ENV_FILE" = "true" ]; then \
-        mv /tmp/.env /app/.env; \
-    else \
-        rm /tmp/.env; \
+        cp /tmp/.env /app/.env; \
     fi
+# remove the .env file from the temporary location
+RUN if [-f /tmp/.env ]; then rm /tmp/.env; fi
 
 # Copy the requirements file into the container
 COPY requirements.txt .
@@ -52,6 +50,10 @@ EXPOSE 5000
 
 # Set the environment variable for Flask
 ENV FLASK_APP=server.py
+ENV FLASK_ENV=production
 
+RUN pip install gunicorn eventlet 
 # Run the Flask app
-CMD ["flask", "run", "--host=0.0.0.0"]
+#CMD ["flask", "run", "--host=0.0.0.0"]
+# Run the Flask app using Gunicorn with eventlet to handle socket connections properly
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "-w", "1", "--worker-class", "eventlet", "server:app"]

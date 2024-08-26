@@ -1,6 +1,7 @@
 import os
 import json
 from flask import Flask, redirect, render_template, request, jsonify
+
 from dotenv import load_dotenv
 from src.genai.summarize import summarize
 from src.pubsub.webpubsubclient import WebPubSubClient
@@ -21,7 +22,7 @@ PUBSUB_ENDPOINT = os.getenv('PUBSUB_ENDPOINT')
 target_language = 'fr'  # For French translation, for example
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins='*')
+socketio_app = SocketIO(app, cors_allowed_origins='*')
 
 logger = logging.getLogger(__name__)
 site_id = 'test_site'
@@ -129,7 +130,7 @@ def testmode(site_id=None):
 def speaker(site_id=None):
     return render_template('speaker.html', site_id=site_id)
 
-@socketio.on('connect')
+@socketio_app.on('connect')
 def test_connect():
     logger.info('Client connected')
 
@@ -137,7 +138,7 @@ def test_connect():
 # Parameters:
 # site: the site ID
 # source_language: the language of the audio input
-@socketio.on('audio_start')
+@socketio_app.on('audio_start')
 def start_audio_stream(site, source_language):
     try:
         audio_handler.start_audio_stream(site, language_codes, source_language)
@@ -148,7 +149,7 @@ def start_audio_stream(site, source_language):
 
 # processing for message from socket that stops the audio stream
 # and associated speak recognition and translation
-@socketio.on('audio_done')
+@socketio_app.on('audio_done')
 def stop_audio_stream():
     try:
         audio_handler.stop_audio_stream()
@@ -158,7 +159,7 @@ def stop_audio_stream():
         logger.error(f'Error stopping audio stream: {e}') 
 
 # processing for message from socket that indicate a disconnection 
-@socketio.on('disconnect')
+@socketio_app.on('disconnect')
 def test_disconnect():
     if audio_handler.is_audio_stream_running():
         audio_handler.stop_audio_stream()
@@ -172,7 +173,7 @@ def test_disconnect():
 # translated to the target languages using the translator API
 # the original text and translated text is sent to the Web PubSub service
 # and a transcription message is sent back to the client
-@socketio.on('audio_data')
+@socketio_app.on('audio_data')
 def handle_audio_stream(data):
     logger.debug(f'Received audio data {len(data)}')
     # Convert data to bytes if necessary
@@ -229,4 +230,7 @@ def generate_qr_speaker(site_id):
     return generate_qr_code_speaker(base_url, site_id)
 
 if __name__ == '__main__':
-    app.run()
+    #app.run()
+    socketio_app.run(app, host='0.0.0.0', port=5000)
+    #import uvicorn
+    #socketio.run(asgi_app, host='0.0.0.0', port=5000)
